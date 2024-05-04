@@ -1,1 +1,6 @@
 bot-env/config.json
+bot-env/Scripts
+bot-env/Lib
+bot-env/Include
+bot-env/config.ini
+bot-env/pyvenv.cfg
