@@ -26,6 +26,6 @@ Discord.py( https://github.com/Rapptz/discord.py )を使用して作成しまし
 
 "volume"はサウンドボードを再生するときの音量です。"prefix"にはサウンドボードを再生するときに使うコマンドの接頭辞です。`!`などに変えても問題ないです。
 
-"showtoken"は起動時のログにtokenを記載するか設定してください。
+"showtoken"は起動時のログにtokenを記載するかの設定です。
 
 サウンドの追加方法を書いてたけどめんどくさいのでsounds.jsonとかを見て自分でやってください(投げやり
