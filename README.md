@@ -28,6 +28,6 @@ Discord.py V2( https://github.com/Rapptz/discord.py )を使用しています。
 
 サウンドを追加する場合bot-envのsoundsフォルダに追加したい名前のmp3ファイルを追加し、sounds.jsonに以下の例を見て行を追加してください。`,`を忘れずに。
 
-soundnameとsound.mp3の名前はは追加するものに応じて変更してください。例えば、hakkyou.mp3を追加して使う場合`"hakkyou": "sounds/hakkyou.mp3"`のように。soundnameの部分は再生するときの名前になります。(.p hakkyou のようになります)
-
 `"soundname": "sounds/sound.mp3",`
+
+soundnameとsound.mp3の名前はは追加するものに応じて変更してください。例えば、hakkyou.mp3を追加して使う場合`"hakkyou": "sounds/hakkyou.mp3"`のように。soundnameの部分は再生するときの名前になります。(.p hakkyou のようになります)
