@@ -4,3 +4,4 @@ bot-env/Lib
 bot-env/Include
 bot-env/config.ini
 bot-env/pyvenv.cfg
+bot-env/sounds/*

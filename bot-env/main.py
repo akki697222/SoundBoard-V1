@@ -42,14 +42,19 @@ async def on_message(message):
     guild = message.guild
     soundboard_channel = discord.utils.get(guild.channels, name='soundboard')
     if message.channel == soundboard_channel:
-        print(f"名前が'soundboard'であるチャンネルからメッセージを受信しました: {message.content}")
+        print(f"名前が'soundboard'のチャンネルからメッセージを受信しました: {message.content}")
         for key, value in dataS.items():
             if message.content.startswith(f"{data['prefix']}p {key}"):
                 print("soundsに含まれる特定の文字列が送信されました。")
-                if message.author.voice and discord.utils.get(client.voice_clients, guild=message.guild):
-                    print(f"サウンド {key} を再生します...(path: {value})")
-                    source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable="C:/Users/akki/ffmpeg/ffmpeg.exe", source=value), volume=float(volume))
-                    message.guild.voice_client.play(source)
+                if message.author.voice:
+                    if discord.utils.get(client.voice_clients, guild=message.guild):
+                        print(f"サウンド {key} を再生します...(path: {value})")
+                        source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable="C:/Users/akki/ffmpeg/ffmpeg.exe", source=value), volume=float(volume))
+                        message.guild.voice_client.play(source)
+                    else:
+                        await message.channel.send("/joinを実行し、BOTがVCに接続してから実行してください。")
+                else:
+                    await message.channel.send(f"{message.author.name} さん、VCに参加してから実行してください。")
             if message.content == f"{data["prefix"]}stop":
                 print("再生を停止しました。")
                 message.guild.voice_client.stop()
@@ -84,9 +89,10 @@ async def ping(interaction):
 async def help(interaction):
     embed = discord.Embed(title="Help", description="使用可能なコマンドの一覧です。")
     embed.add_field(name="/help", value="このコマンドです。", inline=False)
-    embed.add_field(name=f"{data["prefix"]}p [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
     embed.add_field(name="/sounds", value="使用可能なサウンドボードの一覧です。", inline=False)
     embed.add_field(name="/ping", value="pingを取得します。", inline=False)
+    embed.add_field(name=f"{data["prefix"]}p [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
+    embed.add_field(name=f"{data["prefix"]}stop [sound]", value="現在流れているサウンドをすべて止めます。", inline=False)
     # embed.add_field(name="/", value="説明", inline=False) てんぷら
     await interaction.response.send_message(embed=embed)
 

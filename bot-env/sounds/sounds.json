@@ -1,6 +1,12 @@
 {
     "airhorn": "sounds/airhorn.mp3",
-    "scream": "sounds/scream.mp3",
     "deden": "sounds/deden.mp3",
-    "soren": "sounds/soren.mp3"
+    "soren": "sounds/soren.mp3",
+    "tyler1scream": "sounds/tyler1scream.mp3",
+    "tyler1help": "sounds/tyler1help.mp3",
+    "wii": "sounds/wii.mp3",
+    "good": "sounds/good.mp3",
+    "fbi": "sounds/fbi.mp3",
+    "dialup": "sounds/dialup.mp3",
+    "bruh": "sounds/bruh.mp3"
 }
