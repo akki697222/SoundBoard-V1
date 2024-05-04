@@ -31,3 +31,7 @@ Discord.py( https://github.com/Rapptz/discord.py )を使用して作成しまし
 サウンドの追加方法を書いてたけどめんどくさいのでsounds.jsonとかを見て自分でやってください(投げやり
 
 あ、あとffmpegの実行ファイルをbot-envに入れておいてね。それとDiscord.pyは[voice]付きでインストールしないと動かないので注意
+
+サウンドを再生する場合は`soundboard`という名前のチャンネルを作ってそこで`.p [sound]` のように実行してください。
+
+説明が分かりづらかったらすまない。
