@@ -1,5 +1,5 @@
 # SoundBoard-V1
-## A Discord Bot. 
+## DiscordのBotです。
 
 Discordでサウンドボードのような機能が使えるbotです。
 誰かさん「いや標準でサウンドボードあるやんｗｗｗ」
