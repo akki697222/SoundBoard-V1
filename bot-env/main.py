@@ -84,7 +84,7 @@ async def ping(interaction):
 async def help(interaction):
     embed = discord.Embed(title="Help", description="使用可能なコマンドの一覧です。")
     embed.add_field(name="/help", value="このコマンドです。", inline=False)
-    embed.add_field(name=".p [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
+    embed.add_field(name=f"{data["prefix"]}p [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
     embed.add_field(name="/sounds", value="使用可能なサウンドボードの一覧です。", inline=False)
     embed.add_field(name="/ping", value="pingを取得します。", inline=False)
     # embed.add_field(name="/", value="説明", inline=False) てんぷら
