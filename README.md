@@ -29,3 +29,5 @@ Discord.py( https://github.com/Rapptz/discord.py )を使用して作成しまし
 "showtoken"は起動時のログにtokenを記載するかの設定です。
 
 サウンドの追加方法を書いてたけどめんどくさいのでsounds.jsonとかを見て自分でやってください(投げやり
+
+あ、あとffmpegの実行ファイルをbot-envに入れておいてね。それとDiscord.pyは[voice]付きでインストールしないと動かないので注意
