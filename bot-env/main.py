@@ -48,7 +48,7 @@ async def on_message(message):
                 print("soundsに含まれる特定の文字列が送信されました。")
                 if message.author.voice and discord.utils.get(client.voice_clients, guild=message.guild):
                     print(f"サウンド {key} を再生します...(path: {value})")
-                    source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable="C:/Users/akki/ffmpeg/ffmpeg.exe", source=value), volume=float(volume))
+                    source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable="ffmpeg.exe", source=value), volume=float(volume))
                     message.guild.voice_client.play(source)
             if message.content == f"{data["prefix"]}stop":
                 print("再生を停止しました。")
