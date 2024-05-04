@@ -11,7 +11,7 @@ Discordでサウンドボードのような機能が使えるbotです。
 
 (あとPythonの勉強もかねて)
 
-Discord.py V2( https://github.com/Rapptz/discord.py )を使用しています。
+Discord.py( https://github.com/Rapptz/discord.py )を使用して作成しました。
 このbotを使いたい方はbot-envフォルダ内にconfig.jsonを作成し、以下のコードをコピぺしてください。
 ```json:config.json
 {
