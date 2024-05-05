@@ -7,8 +7,12 @@ config = open("config.json", "r")
 data = json.load(config)
 volume = data["volume"]
 
-soundboards = open("sounds/sounds.json", "r")
-dataS = json.load(soundboards)
+embedColor = 0x1e90ff
+
+def loadSounds():
+    with open("sounds/sounds.json", "r") as file:
+        dataS = json.load(file)
+    return dataS
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -43,6 +47,7 @@ async def on_message(message):
     soundboard_channel = discord.utils.get(guild.channels, name='soundboard')
     if message.channel == soundboard_channel:
         print(f"名前が'soundboard'のチャンネルからメッセージを受信しました: {message.content}")
+        dataS = loadSounds()
         for key, value in dataS.items():
             if message.content.startswith(f"{data['prefix']}p {key}"):
                 print("soundsに含まれる特定の文字列が送信されました。")
@@ -87,20 +92,38 @@ async def ping(interaction):
 
 @tree.command(name="help", description="Helpを表示します")
 async def help(interaction):
-    embed = discord.Embed(title="Help", description="使用可能なコマンドの一覧です。")
+    embed = discord.Embed(title="Help", description="使用可能なコマンドの一覧です。", color=embedColor)
     embed.add_field(name="/help", value="このコマンドです。", inline=False)
     embed.add_field(name="/sounds", value="使用可能なサウンドボードの一覧です。", inline=False)
     embed.add_field(name="/ping", value="pingを取得します。", inline=False)
     embed.add_field(name=f"{data["prefix"]}p [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
-    embed.add_field(name=f"{data["prefix"]}stop [sound]", value="現在流れているサウンドをすべて止めます。", inline=False)
+    embed.add_field(name=f"{data["prefix"]}stop", value="現在流れているサウンドをすべて止めます。", inline=False)
     # embed.add_field(name="/", value="説明", inline=False) てんぷら
     await interaction.response.send_message(embed=embed)
 
 @tree.command(name="sounds", description="使用可能なサウンドの取得")
 async def sounds(interaction):
-    embed = discord.Embed(title="使用可能なサウンドボード",description="現在使用できるすべてのサウンドボード")
+    embed = discord.Embed(title="使用可能なサウンドボード", description="現在使用できるすべてのサウンドボード", color=embedColor)
+    dataS = loadSounds()
     for key, value in dataS.items():
         embed.add_field(name=key, value=value, inline=False)
     await interaction.response.send_message(embed=embed)
+
+@tree.command(name="addsound", description="サウンドを追加します。")
+async def addSound(interaction: discord.Interaction, file: discord.Attachment, soundname: str):
+    if file.filename.lower().endswith('.mp3'):
+        dataS = loadSounds()
+        soundsDict = dict(dataS)
+        fname = file.filename
+        await file.save(f"sounds/{soundname}.mp3")
+        soundsDict.update({f"{soundname}": f"sounds/{soundname}.mp3"})
+        with open("sounds/sounds.json", "w") as file:
+            json.dump(soundsDict, file, indent=4)
+            await interaction.response.send_message(f"送信されたファイル'`{fname}`'をサウンド名'{soundname}'として追加しました。", ephemeral=True)
+            await loadSounds()
+
+    else:
+        await interaction.response.send_message("mp3形式で送信してください。", ephemeral=True)
+        return
 
 client.run(data["token"])
