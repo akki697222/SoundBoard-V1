@@ -1,14 +1,4 @@
-bot-envフォルダ内にconfig.jsonを作成し、以下のコードをコピぺしてください。
-↑あらかじめ用意しておいたinit関数を実行すれば作ってくれます
-```json:config.json
-{
-    "token":"Your token Here",
-    "showtoken":"true",
-    "volume":"0.5",
-    "prefix":".",
-    "autoconnect": true
-}
-```
+init関数を実行すれば必要なjsonファイルを勝手に作ってくれます。
 
 "Your token Here"の場所にはBotのトークンを記載してください。(変更せずに実行しても動きません)
 
@@ -33,6 +23,5 @@ bot-envフォルダ内にconfig.jsonを作成し、以下のコードをコピ�
 /addsound コマンドを実装したのでdiscordから実行すれば勝手にやってくれます。
 
 分かりづらかったらごめんね。
-
 
 BOTアカウントの作成方法などは公式の記事などを参考にしてください。ここではあくまでもこのBOTの使用方法のみ記載しておきます。

@@ -19,7 +19,7 @@ def init():
     if not os.path.exists("config.json"):
         print("config.json not found. creating...")
         with open("config.json", "w") as file:
-            json.dump({"token": "your token here", "showtoken": True, "volume": 1, "prefix": ".", "autoconnect": False}, file, indent=4)
+            json.dump({"token": "your token here", "showtoken": True, "volume": 1, "prefix": ".", "autoconnect": False, "denybot": True}, file, indent=4)
         print("Created config.json. Please insert the token in config.json before running your bot.")
         print("Exiting...")
         sys.exit()
@@ -40,7 +40,7 @@ def loadJson(jsonpath):
 def showConfig():
     data = loadJson("config.json")
     print("----- CONFIG -----")
-    if data["showtoken"] == True:
+    if data["showtoken"]:
         print(f"Bot Token: {data["token"]}")
     for key, value in data.items():
         if not key == "token":
@@ -86,11 +86,13 @@ async def on_message(message):
     if message.author == client.user:
         return
     guild = message.guild
+    dataS = loadJson("sounds/sounds.json")
+    data = loadJson("config.json")
     soundboard_channel = discord.utils.get(guild.channels, name='soundboard')
     soundboard_channel_jp = discord.utils.get(guild.channels, name='サウンドボード')
     if message.channel == soundboard_channel or message.channel == soundboard_channel_jp:
         print(f"名前が'soundboard'または'サウンドボード'のチャンネルからメッセージを受信しました: {message.content}")
-        if message.author.bot:
+        if message.author.bot and data["denybot"]:
             print("送信元がbotです。処理を中断します。")
             return
         blacklist = loadJson("blacklist.json")
@@ -99,16 +101,21 @@ async def on_message(message):
                 print("送信元がブラックリストに入っています。処理を中断します。")
                 await message.channel.send(f"{message.author.display_name}({message.author.id})さんはブラックリストに入っているので使えません。残念でした！")
                 return
-        dataS = loadJson("sounds/sounds.json")
-        data = loadJson("config.json")
         for key, value in dataS.items():
             if message.content == (f"{data['prefix']}p {key}") or message.content == (f"{data['prefix']}play {key}"):
                 print("sounds.jsonに含まれる特定の文字列が送信されました。")
+                if message.author.bot and data["denybot"] == False:
+                    if data["autoconnect"] and not message.guild.voice_client:
+                        await message.channel.send("BOTからの操作ではAutoConnect設定は使用できません。BOTがVCに参加してから使用してください。")
+                        return
+                    print("送信元がbotですが、denybot設定がオフなので無視します。")
+                    await playSound(key, value, message, data)
+                    return
                 if not message.author.voice:
                     await message.channel.send(f"{message.author.display_name}({message.author.id})さん、VCに参加してから実行してください。")
                     return
                 elif not message.guild.voice_client:
-                    if data["autoconnect"] == True:
+                    if data["autoconnect"]:
                         await message.author.voice.channel.connect()
                         await playSound(key, value, message, data)
                         return
@@ -121,6 +128,11 @@ async def on_message(message):
                     await message.channel.send("普通に使っていれば出るはずのないエラーです。おめでとう！(?)")
                     return
             elif message.content == f"{data["prefix"]}stop" and message.author.voice:
+                print("再生を停止しました。")
+                message.guild.voice_client.stop()
+                return
+            elif message.author.bot and data["denybot"] == False and message.content == f"{data["prefix"]}stop":
+                print("送信元がbotですが、denybot設定がオフなので無視します。")
                 print("再生を停止しました。")
                 message.guild.voice_client.stop()
                 return
@@ -181,6 +193,7 @@ async def settings(interaction):
     embed.add_field(name="", value=f"Volume: {data["volume"]}", inline=False)
     embed.add_field(name="", value=f"Prefix: `{data["prefix"]}`", inline=False)
     embed.add_field(name="", value=f"AutoConnect: `{data["autoconnect"]}`", inline=False)
+    embed.add_field(name="", value=f"DenyBot: `{data["denybot"]}`", inline=False)
     await interaction.response.send_message(embed=embed)
 
 @tree.command(name="sounds", description="使用可能なサウンドの取得")
@@ -219,7 +232,7 @@ async def setVolume(interaction, volume: float):
     data = loadJson("config.json")
     if 0 <= volume <= 1:
         volume_ = data["volume"]
-        changeSettings("volume", volume)
+        await changeSettings("volume", volume)
         await interaction.response.send_message(f"音量を{volume}に変更しました。(元の値: {volume_})")
     else:
         await interaction.response.send_message("音量は0以上もしくは1以下に設定してください。", ephemeral=True)
@@ -230,7 +243,18 @@ async def setAutoConnect(interaction, value: bool):
     data = loadJson("config.json")
     if isinstance(value, bool):
         setting_ = data["autoconnect"]
-        changeSettings("autoconnect", value)
+        await changeSettings("autoconnect", value)
+        await interaction.response.send_message(f"設定を{value}に変更しました。(元の値: {setting_})")
+    else:
+        await interaction.response.send_message("不正な値です。||本来出ないはずですが...何かしましたか...?||", ephemeral=True)
+        return
+
+@tree.command(name="setdenybot", description="botからの操作を拒否するかの設定です。")
+async def setDenyBot(interaction, value: bool):
+    data = loadJson("config.json")
+    if isinstance(value, bool):
+        setting_ = data["denybot"]
+        await changeSettings("denybot", value)
         await interaction.response.send_message(f"設定を{value}に変更しました。(元の値: {setting_})")
     else:
         await interaction.response.send_message("不正な値です。||本来出ないはずですが...何かしましたか...?||", ephemeral=True)

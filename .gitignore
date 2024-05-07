@@ -6,3 +6,4 @@ bot-env/config.ini
 bot-env/pyvenv.cfg
 bot-env/sounds/*
 bot-env/sounds/sounds.json
+test.py
