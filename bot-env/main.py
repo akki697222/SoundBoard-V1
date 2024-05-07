@@ -8,6 +8,12 @@ from discord import app_commands
 ffmpeg_path = "C:/Users/akki/ffmpeg/ffmpeg.exe"
 embedColor = 0x1e90ff
 
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
+
+intents.message_content = True
+
 def init():
     print("initializing...")
     if not os.path.exists("config.json"):
@@ -20,6 +26,10 @@ def init():
     if not os.path.exists("sounds/sounds.json"):
         print("sounds.json not found. creating...")
         with open("config.json", "w") as file:
+            json.dump({}, file, indent=4)
+    if not os.path.exists("blacklist.json"):
+        print("blacklist.json not found. creating...")
+        with open("blacklist.json", "w") as file:
             json.dump({}, file, indent=4)
 
 def loadJson(jsonpath):
@@ -58,12 +68,6 @@ async def playSound(key, value, message, data):
             await message.channel.send(f"既にサウンドを再生中です。`{data["prefix"]}stop`で再生を停止、または現在再生中のサウンドが終了してから実行してください。")
         else:
             await message.channel.send(f"予期せぬエラーが発生しました。管理者に連絡してください。\nError: {e}")
-
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
-tree = app_commands.CommandTree(client)
-
-intents.message_content = True
 
 async def getPing():
     raw_ping = client.latency
@@ -154,11 +158,17 @@ async def ping(interaction):
 @tree.command(name="help", description="Helpを表示します")
 async def help(interaction):
     data = loadJson("config.json")
-    embed = discord.Embed(title="Help", description="使用可能なコマンドの一覧です。", color=embedColor)
+    embed = discord.Embed(title="Help / ヘルプ", description="使用可能なコマンドの一覧です。", color=embedColor)
     embed.add_field(name="/help", value="このコマンドです。", inline=False)
     embed.add_field(name="/sounds", value="使用可能なサウンドボードの一覧です。", inline=False)
     embed.add_field(name="/ping", value="pingを取得します。", inline=False)
-    embed.add_field(name=f"{data["prefix"]}p [sound] / {data["prefix"]}play [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
+    embed.add_field(name="/addsound [mp3 file] [sound name]", value="サウンドを追加します。", inline=False)
+    embed.add_field(name="/join", value="VCに参加します。", inline=False)
+    embed.add_field(name="/leave", value="VCから退出します。", inline=False)
+    embed.add_field(name="/settings", value="現在の設定を表示します。", inline=False)
+    embed.add_field(name="/setvolume", value="音量を変えます。0~1までの値です。", inline=False)
+    embed.add_field(name="/setautoconnect", value="音声再生時に、botがVCにいなかった場合に自動で参加するかの設定です。", inline=False)
+    embed.add_field(name=f"{data["prefix"]}p [sound] | {data["prefix"]}play [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
     embed.add_field(name=f"{data["prefix"]}stop", value="現在流れているサウンドをすべて止めます。", inline=False)
     embed.add_field(name="", value="SoundBoard Bot V1", inline=False)
     # embed.add_field(name="/", value="説明", inline=False) てんぷら
@@ -201,6 +211,8 @@ async def addSound(interaction: discord.Interaction, file: discord.Attachment, s
 @tree.command(name="guide", description="使用時のガイドを表示します。")
 async def showGuide(interaction):
     embed = discord.Embed(title="ガイド", description="botのガイドです。", color=embedColor)
+    embed.add_field(name="えー ヘルプ見ろ！", value="")
+    await interaction.response.send_message(embed=embed)
 
 @tree.command(name="setvolume", description="音量を変えます。")
 async def setVolume(interaction, volume: float):
