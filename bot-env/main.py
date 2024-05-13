@@ -14,24 +14,6 @@ tree = app_commands.CommandTree(client)
 
 intents.message_content = True
 
-def init():
-    print("initializing...")
-    if not os.path.exists("config.json"):
-        print("config.json not found. creating...")
-        with open("config.json", "w") as file:
-            json.dump({"token": "your token here", "showtoken": True, "volume": 1, "prefix": ".", "autoconnect": False, "denybot": True}, file, indent=4)
-        print("Created config.json. Please insert the token in config.json before running your bot.")
-        print("Exiting...")
-        sys.exit()
-    if not os.path.exists("sounds/sounds.json"):
-        print("sounds.json not found. creating...")
-        with open("config.json", "w") as file:
-            json.dump({}, file, indent=4)
-    if not os.path.exists("blacklist.json"):
-        print("blacklist.json not found. creating...")
-        with open("blacklist.json", "w") as file:
-            json.dump({}, file, indent=4)
-
 def loadJson(jsonpath):
     with open(jsonpath, "r") as file:
         data = json.load(file)
@@ -179,6 +161,7 @@ async def help(interaction):
     embed.add_field(name="/leave", value="VCから退出します。", inline=False)
     embed.add_field(name="/settings", value="現在の設定を表示します。", inline=False)
     embed.add_field(name="/setvolume", value="音量を変えます。0~1までの値です。", inline=False)
+    embed.add_field(name="/setdenybot", value="BOTからの操作を許可するかの設定です。", inline=False)
     embed.add_field(name="/setautoconnect", value="音声再生時に、botがVCにいなかった場合に自動で参加するかの設定です。", inline=False)
     embed.add_field(name=f"{data["prefix"]}p [sound] | {data["prefix"]}play [sound]", value="サウンドボードを流します。\n/soundsコマンドで使用可能なサウンドが確認できます。", inline=False)
     embed.add_field(name=f"{data["prefix"]}stop", value="現在流れているサウンドをすべて止めます。", inline=False)
@@ -249,7 +232,7 @@ async def setAutoConnect(interaction, value: bool):
         await interaction.response.send_message("不正な値です。||本来出ないはずですが...何かしましたか...?||", ephemeral=True)
         return
 
-@tree.command(name="setdenybot", description="botからの操作を拒否するかの設定です。")
+@tree.command(name="setdenybot", description="botからの操作を許可するかの設定です。")
 async def setDenyBot(interaction, value: bool):
     data = loadJson("config.json")
     if isinstance(value, bool):
